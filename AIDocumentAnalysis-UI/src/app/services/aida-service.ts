@@ -9,9 +9,9 @@ export class AidaService {
   constructor(private http: HttpClient){ 
   }
 
-  login(url:string, body?:any)
+  login(url: string, body?: { id_token: string }): Observable<{ accessToken?: string; message: string }>
   {
-    return this.http.post(url,body)
+    return this.http.post<{ accessToken?: string; message: string }>(url, body);
   }
 
   getConfig(): Observable<any> {
