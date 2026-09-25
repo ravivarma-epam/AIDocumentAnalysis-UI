@@ -1,1 +1,56 @@
-<p>home works!</p>
+<div class="portal-shell">
+	<aside class="portal-sidebar">
+		<div class="brand-mark"><span class="brand-dot"></span> aether<span>/portal</span></div>
+		<div class="sidebar-label">Workspace</div>
+		<nav>
+			<a class="nav-item active" href="/home"><span class="nav-icon">&#9632;</span> Overview</a>
+			<a class="nav-item" href="/home"><span class="nav-icon">&#9670;</span> Interviews <span class="nav-count">2</span></a>
+			<a class="nav-item" href="/home"><span class="nav-icon">&#9783;</span> Profile</a>
+		</nav>
+		<div class="sidebar-bottom">
+			<div class="help-card"><strong>Need a hand?</strong><span>Review your profile before the next round.</span><button type="button">Open guide</button></div>
+			<button class="sign-out" type="button" (click)="signOut()"><span>&#8592;</span> Sign out</button>
+		</div>
+	</aside>
+
+	<main class="portal-main">
+		<header class="topbar">
+			<div><div class="eyebrow">Wednesday, September 9, 2026</div><h1>Good morning, candidate.</h1></div>
+			<div class="profile-chip"><span class="avatar">C</span><span><strong>Candidate</strong><small>Active profile</small></span><span class="chevron">&#8964;</span></div>
+		</header>
+
+		<div class="mode-switch" role="tablist" aria-label="Portal mode">
+			<button type="button" [class.selected]="activeMode === 'candidate'" (click)="setMode('candidate')">Candidate workspace</button>
+			<button type="button" [class.selected]="activeMode === 'recruiter'" (click)="setMode('recruiter')">Recruiter workspace</button>
+		</div>
+
+		@if (activeMode === 'candidate') {
+			<section class="welcome-grid">
+				<div class="welcome-panel">
+					<span class="panel-kicker">Your next step</span>
+					<h2>Show what you can do.</h2>
+					<p>Complete your profile and practice with an adaptive AI interview built around the role you want.</p>
+					<div class="welcome-actions"><button class="primary-button" type="button" (click)="startInterview()">{{ interviewStarted ? 'Interview ready' : 'Start practice interview' }} <span>&#8594;</span></button><span class="duration">12-15 min</span></div>
+				</div>
+				<div class="signal-panel"><span class="signal-ring">&#10003;</span><strong>Profile strength</strong><b>74%</b><div class="progress"><span></span></div><small>Add your resume to unlock a stronger match.</small></div>
+			</section>
+
+			<section class="content-section">
+				<div class="section-heading"><div><span class="panel-kicker">Your pipeline</span><h2>Upcoming interviews</h2></div><button class="text-button" type="button">View all <span>&#8594;</span></button></div>
+				<div class="interview-list">
+					@for (interview of interviews; track interview.title) {
+						<article class="interview-row"><div class="company-logo">{{ interview.company.charAt(0) }}</div><div class="interview-info"><strong>{{ interview.title }}</strong><span>{{ interview.company }} <i></i> {{ interview.stage }}</span></div><time>{{ interview.date }}</time><span class="status" [class.ready]="interview.status === 'Ready'">{{ interview.status }}</span><button class="row-action" type="button" (click)="startInterview()">&#8594;</button></article>
+					}
+				</div>
+			</section>
+
+			<section class="profile-section">
+				<div><span class="panel-kicker">Candidate essentials</span><h2>Make your profile work harder.</h2><p>Your resume helps us tailor questions and gives recruiters the context behind your experience.</p></div>
+				<label class="upload-card"><span class="upload-icon">&#8593;</span><span><strong>{{ uploaded ? 'Resume uploaded' : 'Add your resume' }}</strong><small>{{ uploaded ? resumeName : 'PDF or DOCX, up to 10 MB' }}</small></span><input type="file" accept=".pdf,.doc,.docx" (change)="onResumeSelected($event)" /><span class="upload-arrow">&#8594;</span></label>
+			</section>
+		} @else {
+			<section class="recruiter-hero"><span class="panel-kicker">Recruiter workspace</span><h2>Turn every interview into signal.</h2><p>Track candidate progress, review AI summaries, and keep every hiring decision moving.</p><button class="primary-button" type="button">Create interview loop <span>&#8594;</span></button></section>
+			<section class="content-section"><div class="section-heading"><div><span class="panel-kicker">Live hiring rooms</span><h2>Active interview loops</h2></div><button class="text-button" type="button">Manage all <span>&#8594;</span></button></div><div class="interview-list">@for (interview of recruiterInterviews; track interview.title) {<article class="recruiter-row"><div class="company-logo dark">&#9670;</div><div class="interview-info"><strong>{{ interview.title }}</strong><span>{{ interview.candidates }} <i></i> {{ interview.updated }}</span></div><div class="mini-progress"><span>{{ interview.progress }}</span><div class="progress"><span [style.width]="interview.progress"></span></div></div><button class="row-action" type="button">&#8594;</button></article>}</div></section>
+		}
+	</main>
+</div>
