@@ -46,7 +46,12 @@
 
 			<section class="profile-section">
 				<div><span class="panel-kicker">Candidate essentials</span><h2>Make your profile work harder.</h2><p>Your resume helps us tailor questions and gives recruiters the context behind your experience.</p></div>
-				<label class="upload-card"><span class="upload-icon">&#8593;</span><span><strong>{{ uploaded ? 'Resume uploaded' : 'Add your resume' }}</strong><small>{{ uploaded ? resumeName : 'PDF or DOCX, up to 10 MB' }}</small></span><input type="file" accept=".pdf,.doc,.docx" (change)="onResumeSelected($event)" /><span class="upload-arrow">&#8594;</span></label>
+				<div class="resume-upload-control">
+					<label class="upload-card"><span class="upload-icon">&#8593;</span><span><strong>{{ uploaded ? 'Resume uploaded' : 'Add your resume' }}</strong><small>{{ uploaded ? resumeName : 'PDF or DOCX, up to 10 MB' }}</small></span><input type="file" accept=".pdf,.doc,.docx" (change)="onResumeSelected($event)" /><span class="upload-arrow">&#8594;</span></label>
+					<button class="analyze-button" type="button" [disabled]="!selectedFile || isAnalyzing" (click)="analyzeResume()">{{ isAnalyzing ? 'Analyzing...' : 'Analyze document' }}</button>
+					<p class="analysis-result" role="status" [hidden]="!analysisResult">Analysis complete: {{ analysisResult }}</p>
+					<p class="analysis-error" role="alert" [hidden]="!analysisError">{{ analysisError }}</p>
+				</div>
 			</section>
 		} @else {
 			<section class="recruiter-hero"><span class="panel-kicker">Recruiter workspace</span><h2>Turn every interview into signal.</h2><p>Track candidate progress, review AI summaries, and keep every hiring decision moving.</p><button class="primary-button" type="button">Create interview loop <span>&#8594;</span></button></section>

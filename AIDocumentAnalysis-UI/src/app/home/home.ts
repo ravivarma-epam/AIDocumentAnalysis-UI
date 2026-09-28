@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { AuthService } from '../services/auth-service';
+import { AidaService } from '../services/aida-service';
+import { ConfigService } from '../services/config-service';
+import { Constants } from '../constants';
 
 type PortalMode = 'candidate' | 'recruiter';
 
@@ -16,6 +19,10 @@ export class Home {
   resumeName = '';
   interviewStarted = false;
   uploaded = false;
+  selectedFile: File | null = null;
+  isAnalyzing = false;
+  analysisResult = '';
+  analysisError = '';
 
   readonly interviews = [
     { title: 'Senior Frontend Engineer', company: 'Aether Labs', stage: 'AI screening', date: 'Today, 4:30 PM', status: 'Ready' },
@@ -30,7 +37,9 @@ export class Home {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private googleAuth: SocialAuthService
+    private googleAuth: SocialAuthService,
+    private aida: AidaService,
+    private config: ConfigService
   ) {}
 
   setMode(mode: PortalMode): void {
@@ -41,9 +50,35 @@ export class Home {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) {
+      this.selectedFile = file;
       this.resumeName = file.name;
       this.uploaded = true;
+      this.analysisResult = '';
+      this.analysisError = '';
     }
+  }
+
+  analyzeResume(): void {
+    if (!this.selectedFile || this.isAnalyzing) {
+      return;
+    }
+
+    this.isAnalyzing = true;
+    this.analysisResult = '';
+    this.analysisError = '';
+    this.aida.analyzeDocument(
+      `${this.config.getaidaUrl()}${Constants.analyzeDocumentUrl}`,
+      this.selectedFile
+    ).subscribe({
+      next: response => {
+        this.analysisResult = response.filePath;
+        this.isAnalyzing = false;
+      },
+      error: () => {
+        this.analysisError = 'Document analysis failed. Please try again.';
+        this.isAnalyzing = false;
+      },
+    });
   }
 
   startInterview(): void {

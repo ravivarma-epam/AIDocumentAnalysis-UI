@@ -14,6 +14,12 @@ export class AidaService {
     return this.http.post<{ accessToken?: string; message: string }>(url, body);
   }
 
+  analyzeDocument(url: string, file: File): Observable<{ filePath: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ filePath: string }>(url, formData);
+  }
+
   getConfig(): Observable<any> {
     return this.http.get('/assets/appsettings.json');
   }
